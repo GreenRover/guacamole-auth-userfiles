@@ -1,0 +1,16 @@
+{
+
+    "guacamoleVersion" : "0.9.8",
+
+    "name"      : "User files Authentication",
+    "namespace" : "guac-userfiles",
+
+    "authProviders" : [
+        "net.sourceforge.guacamole.net.auth.userfiles.UserFilesAuthenticationProvider"
+    ],
+
+    "translations" : [
+        "translations/en.json"
+    ]
+
+}
