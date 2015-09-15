@@ -29,6 +29,11 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
      * The current configuration being parsed, if any.
      */
     private GuacamoleConfiguration currentConfig = null;
+    
+    /**
+     * Check if config file should be deleted.
+     */
+    private Boolean deleteConfig = false;
 
     /**
      * Returns the a map of all available configurations as parsed from the
@@ -38,6 +43,14 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
      */
     public Map<String, GuacamoleConfiguration> getConfigs() {
         return Collections.unmodifiableMap(configs);
+    }
+    
+    /**
+     * Return bit if config fiel should be deleted.
+     * @return 
+     */
+    public Boolean getDeleteConfig() {
+        return deleteConfig;
     }
 
     @Override
@@ -59,7 +72,6 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-
         // Begin configuration parsing if config element
         if (localName.equals("config")) {
 
@@ -93,6 +105,17 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
 
             currentConfig.setParameter(attributes.getValue("name"), attributes.getValue("value"));
 
+        } else if (localName.equals("configs")) {
+            String deleteConfigStr = attributes.getValue("delete");
+            
+            if (deleteConfigStr != null && (
+                    deleteConfigStr.toLowerCase().equals("yes") || 
+                    deleteConfigStr.toLowerCase().equals("true") || 
+                    deleteConfigStr.toLowerCase().equals("1"))) {
+                
+                deleteConfig = true;
+            }
+            
         }
 
     }

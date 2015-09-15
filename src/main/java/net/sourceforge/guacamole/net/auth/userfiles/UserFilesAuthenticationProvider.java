@@ -151,6 +151,15 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
             // Init configs
             configTime = configFile.lastModified();
             configs = contentHandler.getConfigs();
+            
+            logger.debug("getDeleteConfig: {}", ((contentHandler.getDeleteConfig() == true) ? "Yes" : "No"));
+            if (contentHandler.getDeleteConfig() == true) {
+                try {
+                    configFile.delete();
+                } catch (Exception e) {
+                    logger.warn("Error deleting config file: \"{}\": \"{}\"", configFile, e.getMessage());
+                }
+            }
 
         }
         catch (IOException e) {
