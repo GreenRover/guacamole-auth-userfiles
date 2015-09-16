@@ -73,7 +73,7 @@ The format of `*noauth-config.xml` will be the same as of the noauth plugin.
 
 Example:
 ```xml
-    <configs>
+    <configs delete="false">
             <config name="RDP" protocol="rdp">
                     <param name="hostname" value="192.168.110.130" />      <!-- FQDN oder IP des Zielhost -->
                     <param name="port" value="3389" />                   <!-- Port, Standard ist 3389 -->
