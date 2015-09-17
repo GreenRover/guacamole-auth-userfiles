@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Date;
 import java.util.regex.Pattern;
 import org.glyptodon.guacamole.GuacamoleException;
 import org.glyptodon.guacamole.GuacamoleServerException;
@@ -110,7 +111,7 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
         File configFile;
         
         if (!prefix.isEmpty()) {
-            
+            // Check file path dont breaks folder.
             if (!prefix.matches("^[\\w \\-öÖäÄüÜßèéêù]+$")) {
                 throw new GuacamoleServerException("Invalid username or ident.");
             }
@@ -147,10 +148,16 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
             Reader reader = new BufferedReader(new FileReader(configFile));
             parser.parse(new InputSource(reader));
             reader.close();
-
-            // Init configs
-            configTime = configFile.lastModified();
-            configs = contentHandler.getConfigs();
+            
+            // Check if config is valid and use/init.
+            Date now = new Date();
+            if (contentHandler.getValidTo() == null || contentHandler.getValidTo().compareTo(now) >= 0) {
+                // Init configs
+                configTime = configFile.lastModified();
+                configs = contentHandler.getConfigs();
+            } else {
+                logger.warn("Ignore config: \"{}\" because its valid_to \"{}\" is outdated.", configFile, contentHandler.getValidTo().toString());
+            }
             
             logger.debug("getDeleteConfig: {}", ((contentHandler.getDeleteConfig() == true) ? "Yes" : "No"));
             if (contentHandler.getDeleteConfig() == true) {

@@ -240,7 +240,7 @@ class Guacamole_Config_Protocol_Rdp extends Guacamole_Config_Protocol_Abstract {
     /**
      * Session settings
      *
-     * f set to "true", you will be connected to the console (admin) session of the RDP server.
+     * If set to "true", you will be connected to the console (admin) session of the RDP server.
      *
      * @param boolean $console
      *

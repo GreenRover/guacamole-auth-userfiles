@@ -118,19 +118,25 @@ abstract class Guacamole_Config_Protocol_Abstract {
         unset($vars['name']);
         unset($vars['protocol']);
 
-        foreach ($vars as $k => $v) {
-            if ($v === null) {
+        foreach ($vars as $key => $val) {
+            if ($val === null) {
+                // This value was not set. So dont add to xml.
                 continue;
             }
 
             $param = $dom->createElement('param');
 
             $attr_name = $dom->createAttribute('name');
-            $attr_name->value = str_replace('_', '-', $k);
+            $attr_name->value = str_replace('_', '-', $key);
             $param->appendChild($attr_name);
 
+            if (is_bool($val)) {
+                // Convert boolean to required string.
+                $val = ($val === true) ? 'true' : 'false';
+            }
+
             $attr_value = $dom->createAttribute('value');
-            $attr_value->value = $v;
+            $attr_value->value = $val;
             $param->appendChild($attr_value);
 
             $config->appendChild($param);

@@ -1,9 +1,16 @@
 package net.sourceforge.guacamole.net.auth.userfiles;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glyptodon.guacamole.protocol.GuacamoleConfiguration;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -15,6 +22,11 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UserFilesAuthConfigContentHandler extends DefaultHandler {
 
+    /**
+     * Logger for this class.
+     */
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(UserFilesAuthenticationProvider.class);
+    
     /**
      * Map of all configurations, indexed by name.
      */
@@ -34,7 +46,12 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
      * Check if config file should be deleted.
      */
     private Boolean deleteConfig = false;
-
+    
+    /**
+     * The maximum validity of this config.
+     */
+    private Date validTo = null;
+     
     /**
      * Returns the a map of all available configurations as parsed from the
      * XML file. This map is unmodifiable.
@@ -51,6 +68,14 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
      */
     public Boolean getDeleteConfig() {
         return deleteConfig;
+    }
+    
+    /**
+     * Return valid to date or NULL.
+     * @return 
+     */
+    public Date getValidTo() {
+        return validTo;
     }
 
     @Override
@@ -100,8 +125,9 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
         else if (localName.equals("param")) {
 
             // Ensure a corresponding config exists
-            if (currentConfig == null)
+            if (currentConfig == null) {
                 throw new SAXException("Parameter without corresponding configuration.");
+            }
 
             currentConfig.setParameter(attributes.getValue("name"), attributes.getValue("value"));
 
@@ -114,6 +140,35 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
                     deleteConfigStr.toLowerCase().equals("1"))) {
                 
                 deleteConfig = true;
+            }
+            
+            String validToStr = attributes.getValue("valid_to");
+            
+            if (validToStr != null) {
+                // Parse valid_to date for all ISO8601 kinds .
+                DateFormat[] ISO8601_parsers = {
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"),
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"),
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX"),
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
+                };
+
+                String last_error = null;
+                for (DateFormat ISO8601_parser : ISO8601_parsers) {
+                    try {
+                        validTo = ISO8601_parser.parse(validToStr);
+                        last_error = null;
+                        break;
+                    } catch (ParseException ex) {
+                        last_error = ex.getMessage();
+                    }    
+                }
+                
+                if (last_error != null) {
+                    logger.warn("Invalid \"valid_to\" = \"{}\" date. {}", validToStr, last_error);
+                }
             }
             
         }
