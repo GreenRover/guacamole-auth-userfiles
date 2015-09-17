@@ -67,13 +67,13 @@ If the url is: `http://localhost:8080/guacamole/#/?username=mst_henh&ident=1337`
 The default configuration: `mst_henh_1337_noauth-config.xml` will be loadet.
 
 If the url is: `http://localhost:8080/guacamole/#/?ident=1337`
-The default configuration: `anonymous_337_noauth-config.xml` will be loadet.
+The default configuration: `anonymous_1337_noauth-config.xml` will be loadet.
 
 The format of `*noauth-config.xml` will be the same as of the noauth plugin.
 
 Example:
 ```xml
-    <configs delete="false">
+    <configs delete="false" valid_to="2015-09-17T14:39:01+02:00">
             <config name="RDP" protocol="rdp">
                     <param name="hostname" value="192.168.110.130" />      <!-- FQDN oder IP des Zielhost -->
                     <param name="port" value="3389" />                   <!-- Port, Standard ist 3389 -->
@@ -115,6 +115,12 @@ Example:
             </config>
     </configs>
 ```
+
+## Example code
+
+An [example PHP implementation][example-php] is included in `src/example/php`.
+
+[example-php]: https://github.com/GreenRover/guacamole-auth-userfiles/blob/master/src/example/php/simple_example.php
 
 ## License
 

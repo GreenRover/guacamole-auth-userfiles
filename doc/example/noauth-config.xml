@@ -1,4 +1,4 @@
-<configs delete="false">
+<configs delete="false" valid_to="2015-09-17T14:39:01+02:00">
     <config name="myconfig" protocol="rdp">
         <param name="hostname" value="rdp-server" />
         <param name="port" value="3389" />
