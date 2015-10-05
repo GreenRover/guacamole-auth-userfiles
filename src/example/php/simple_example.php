@@ -44,9 +44,19 @@ Config object:
  */
 
 echo "\n\nLink:\n";
+
+// Creates file: "/etc/guacamole/mst_henh_1337_noauth-config.xml" and return link to guacamole home.
 echo $configs->getLink('1337', 'mst_henh');
 echo "\n";
 /*
 Link:
 http://localhost:8080/guacamole/#/?username=mst_henh&ident=133
  */
+
+// Creates file: "/etc/guacamole/mst_henh_1337_noauth-config.xml" and return link to guacamole link.
+echo $configs->getLink('1337', 'mst_henh', true, 'TestVm RDP');
+echo "\n";
+/*
+Link:
+http://localhost:8080/guacamole/#/?username=mst_henh&ident=1337http://localhost:8080/guacamole/e/#/client/VGVzdFZtIFJEUABjAHVzZXJmaWxlc2F1dGg=?username=mst_henh&ident=1337
+*/

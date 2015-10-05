@@ -12,6 +12,8 @@ class Guacamole_Config {
     protected $base_url;
     protected $guacamole_home;
 
+    protected $config_uselink_sufix = 'userfilesauth';
+
     const CONFIG_SUFIX = 'noauth-config.xml';
 
     /**
@@ -221,6 +223,24 @@ class Guacamole_Config {
     }
 
     /**
+     * @return string
+     */
+    public function getConfigUselinkSufix() {
+        return $this->config_uselink_sufix;
+    }
+
+    /**
+     * @param string $config_uselink_sufix
+     *
+     * @return Guacamole_Config
+     */
+    public function setConfigUselinkSufix($config_uselink_sufix) {
+        $this->config_uselink_sufix = $config_uselink_sufix;
+
+        return $this;
+    }
+
+    /**
      * Write config file to filesystem.
      * Please use prior constructor parametes or ->setGuacamoleHome()
      *
@@ -271,10 +291,28 @@ class Guacamole_Config {
      *   Url
      * @throws \Guacamole_Config_Exception
      */
-    public function getLink($ident, $username = null, $write_config = true) {
+    public function getLink($ident, $username = null, $write_config = true, $use_config = '') {
 
         if (empty($ident)) {
             throw new Guacamole_Config_Exception('Ident can not be empty.');
+        }
+
+        if (!empty($use_config)) {
+            if ($use_config instanceof Guacamole_Config_Protocol_Abstract) {
+                $use_config = $use_config->getName();
+            } else {
+                $found_config_to_use = true;
+                foreach ($this->configs as $config) {
+                    /* @var $config Guacamole_Config_Protocol_Abstract */
+                    if ($config->getName() === $use_config) {
+                        $found_config_to_use = true;
+                    }
+                }
+
+                if ($found_config_to_use !== true) {
+                    throw new Guacamole_Config_Exception('Config "' . $use_config . '" should be used but was not found.');
+                }
+            }
         }
 
         if (!preg_match('/^\w{3,40}$/', $ident)) {
@@ -286,7 +324,16 @@ class Guacamole_Config {
         }
 
         $base_url = rtrim($this->getBaseUrl(), '/#');
-        $url = $base_url . '/#/?';
+
+        if (!empty($use_config)) {
+            // Directly open a connection
+            $use_config_hash = base64_encode($use_config . chr(0) . chr(99) . chr(0) . $this->config_uselink_sufix);
+            $url = $base_url . '/#/client/' . $use_config_hash . '?';
+        } else {
+            // Show "home"
+            $url = $base_url . '/#/?';
+        }
+
         if (!empty($username)) {
             $url .= 'username=' . urlencode($username) . '&';
         }
