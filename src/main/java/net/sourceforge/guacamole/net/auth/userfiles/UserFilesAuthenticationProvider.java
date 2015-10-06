@@ -185,12 +185,8 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
         String username = request.getParameter("username");
         String ident = request.getParameter("ident");
         
-        // Set username if given.
-        if (username != null && !username.isEmpty()) {
-            logger.debug("Set username: {}", username);
-            credentials.setUsername(username);
-        } else {
-            // Avoid null point exceptions.
+        // Avoid null point exceptions.
+        if (username == null) {
             username = "";
         }
         
@@ -235,6 +231,12 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
         // If no mapping available, report as such
         if (configs == null) {
             throw new GuacamoleServerException("Configuration could not be read.");
+        } else {
+            // Set username if given.
+            if (!username.isEmpty()) {
+                logger.debug("Set username: {}", username);
+                credentials.setUsername(username);
+            }
         }
 
         return configs;

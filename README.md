@@ -22,8 +22,8 @@ The resulting jar file will be placed in `target/guacamole-auth-userfiles-<versi
 ```bash
     mvn package ; \
       cp /srv/guacamole-auth-userfiles/target/guacamole-auth-userfiles-0.9.8.jar /var/lib/guacamole/extensions/ ; \
-      rm /var/log/tomcat6/* ; service tomcat6 restart ; \
-      tail -f /var/log/tomcat6/catalina.out
+      rm /var/log/tomcat7/* ; service tomcat7 restart ; \
+      tail -f /var/log/tomcat7/catalina.out
 ```
 
 ## Deployment & Configuration
