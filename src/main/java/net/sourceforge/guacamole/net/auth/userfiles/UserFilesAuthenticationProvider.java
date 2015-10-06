@@ -110,7 +110,7 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
         // Get config file, defaulting to GUACAMOLE_HOME/noauth-config.xml
         File configFile;
         
-        if (!prefix.isEmpty()) {
+        if (prefix != null && !prefix.isEmpty()) {
             // Check file path dont breaks folder.
             if (!prefix.matches("^[\\w \\-öÖäÄüÜßèéêù]+$")) {
                 throw new GuacamoleServerException("Invalid username or ident.");
@@ -186,12 +186,20 @@ public class UserFilesAuthenticationProvider extends SimpleAuthenticationProvide
         String ident = request.getParameter("ident");
         
         // Set username if given.
-        if (!username.isEmpty()) {
+        if (username != null && !username.isEmpty()) {
             logger.debug("Set username: {}", username);
             credentials.setUsername(username);
+        } else {
+            // Avoid null point exceptions.
+            username = "";
         }
         
-        /** Debug all get variables.
+        // Avoid null point exceptions.
+        if (ident == null) {
+            ident = "";
+        }
+        
+        /** Debug all HTTP_GET variables.
         @SuppressWarnings("unchecked")
         Map<String, String[]> params = request.getParameterMap();
 
