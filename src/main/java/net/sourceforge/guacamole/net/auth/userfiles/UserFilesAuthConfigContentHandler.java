@@ -16,9 +16,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML parser for the configuration file used by the NoAuth auth provider.
+ * XML parser for the configuration file used by the UserFilesAuth auth provider.
  *
- * @author Laurent Meunier
+ * @author Heiko Henning
  */
 public class UserFilesAuthConfigContentHandler extends DefaultHandler {
 
@@ -63,7 +63,7 @@ public class UserFilesAuthConfigContentHandler extends DefaultHandler {
     }
     
     /**
-     * Return bit if config fiel should be deleted.
+     * Return bit if config file should be deleted.
      * @return 
      */
     public Boolean getDeleteConfig() {
