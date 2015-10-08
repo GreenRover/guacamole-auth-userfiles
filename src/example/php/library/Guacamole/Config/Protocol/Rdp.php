@@ -19,6 +19,7 @@ class Guacamole_Config_Protocol_Rdp extends Guacamole_Config_Protocol_Abstract {
      */
     use Guacamole_Config_Protocol_Sftp;
 
+    protected $username = null;
     protected $password = null;
     protected $domain = null;
     protected $security = null;
@@ -64,6 +65,27 @@ class Guacamole_Config_Protocol_Rdp extends Guacamole_Config_Protocol_Abstract {
     const RDP_SECURETY_TLS = 'tls';
     const RDP_SECURETY_ANY = 'any';
 
+    /**
+     * @return string
+     */
+    public function getUsername() {
+        return $this->username;
+    }
+
+    /**
+     * The password to use when attempting authentication, if any.
+     * This parameter is optional.
+     *
+     * @param string $username
+     *
+     * @return \Guacamole_Config_Protocol_Rdp
+     */
+    public function setUsername($username) {
+        $this->username = $username;
+
+        return $this;
+    }
+    
     /**
      * Get protocol name.
      *
