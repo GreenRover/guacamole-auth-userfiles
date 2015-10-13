@@ -8,6 +8,7 @@ require_once __DIR__ . '/Abstract.php';
 
 class Guacamole_Config_Protocol_Ssh extends Guacamole_Config_Protocol_Abstract {
 
+    protected $username = null;
     protected $password = null;
     protected $private_key = null;
     protected $passphrase = null;
@@ -30,6 +31,27 @@ class Guacamole_Config_Protocol_Ssh extends Guacamole_Config_Protocol_Abstract {
      */
     protected function getProtocol() {
         return 'ssh';
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername() {
+        return $this->username;
+    }
+ 
+    /**
+     * The password to use when attempting authentication, if any.
+     * This parameter is optional.
+     *
+     * @param string $username
+     *
+     * @return \Mst_Guacamole_Config_Protocol_Rdp
+     */
+    public function setUsername($username) {
+        $this->username = $username;
+
+        return $this;
     }
 
     /**
