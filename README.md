@@ -122,6 +122,12 @@ An [example PHP implementation][example-php] is included in `src/example/php`.
 
 [example-php]: https://github.com/GreenRover/guacamole-auth-userfiles/blob/master/src/example/php/simple_example.php
 
+You will need to give this script the permissions to write to the GUACAMOLE_HOME.
+
+For the most enviroments you should do thinks like this.
+`chmod g+w /etc/guacamole`
+`useradd -G guacd www-data`
+
 ## License
 
 MIT License
