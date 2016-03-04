@@ -5,7 +5,7 @@
     <groupId>org.glyptodon.guacamole</groupId>
     <artifactId>guacamole-auth-userfiles</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.8</version>
+    <version>0.9.9</version>
     <name>guacamole-auth-userfiles</name>
     <url>http://www.mst.ch/</url>
 
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>org.glyptodon.guacamole</groupId>
             <artifactId>guacamole-ext</artifactId>
-            <version>0.9.8</version>
+            <version>0.9.9</version>
             <scope>provided</scope>
         </dependency>
         
