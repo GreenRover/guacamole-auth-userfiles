@@ -10,7 +10,42 @@ configuration of remote desktop connections that are authorized using a
 pre-shared key. It is most appropriate for scenarios where you have an existing
 user authentication & authorization mechanism.
 
-This is tested with guacamole 0.9.7 - 0.9.8
+This is tested with guacamole 0.9.7 - 0.9.9
+
+## Download *.jar files
+
+You can find compiled *.jar files at:
+https://github.com/GreenRover/guacamole-auth-userfiles/releases
+
+
+### Install the extension
+
+In my case the folder structure looks like:
+
+```
+/var/lib/tomcat7/webapps/guacamole.war-> /var/lib/guacamole/guacamole-0.9.9.war
+```
+
+So i have to place the extension to:
+
+```
+/var/lib/guacamole/extensions/
+```
+
+sometimes it could also be:
+
+```
+/etc/guacamole/extensions/
+```
+
+This is what i do for setup:
+
+```bash
+cp /tmp/guacamole-auth-userfiles-0.9.8.jar /var/lib/guacamole/extensions/ ; \
+rm /var/log/tomcat7/* ; service tomcat7 restart ; \
+tail -f /var/log/tomcat7/catalina.out
+```
+
 
 ## Building
 
