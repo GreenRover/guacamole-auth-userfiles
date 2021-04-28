@@ -1,6 +1,6 @@
 {
 
-    "guacamoleVersion" : "0.9.9",
+    "guacamoleVersion" : "1.3.0",
 
     "name"      : "User files Authentication",
     "namespace" : "guac-userfiles",
