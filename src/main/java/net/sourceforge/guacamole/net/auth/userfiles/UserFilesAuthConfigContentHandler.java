@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.glyptodon.guacamole.protocol.GuacamoleConfiguration;
+import org.apache.guacamole.protocol.GuacamoleConfiguration;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

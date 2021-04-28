@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Date;
 import java.util.UUID;
-import org.glyptodon.guacamole.GuacamoleException;
-import org.glyptodon.guacamole.GuacamoleServerException;
-import org.glyptodon.guacamole.environment.Environment;
-import org.glyptodon.guacamole.environment.LocalEnvironment;
-import org.glyptodon.guacamole.net.auth.Credentials;
-import org.glyptodon.guacamole.protocol.GuacamoleConfiguration;
+import org.apache.guacamole.GuacamoleException;
+import org.apache.guacamole.GuacamoleServerException;
+import org.apache.guacamole.environment.Environment;
+import org.apache.guacamole.environment.LocalEnvironment;
+import org.apache.guacamole.net.auth.Credentials;
+import org.apache.guacamole.protocol.GuacamoleConfiguration;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.xml.sax.InputSource;
@@ -21,13 +21,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 import javax.servlet.http.HttpServletRequest;
-import org.glyptodon.guacamole.net.auth.AbstractAuthenticatedUser;
-import org.glyptodon.guacamole.net.auth.AuthenticatedUser;
-import org.glyptodon.guacamole.net.auth.AuthenticationProvider;
-import org.glyptodon.guacamole.net.auth.UserContext;
-import org.glyptodon.guacamole.net.auth.simple.SimpleUserContext;
-import org.glyptodon.guacamole.token.StandardTokens;
-import org.glyptodon.guacamole.token.TokenFilter;
+import org.apache.guacamole.net.auth.AbstractAuthenticatedUser;
+import org.apache.guacamole.net.auth.AuthenticatedUser;
+import org.apache.guacamole.net.auth.AuthenticationProvider;
+import org.apache.guacamole.net.auth.UserContext;
+import org.apache.guacamole.net.auth.simple.SimpleUserContext;
+import org.apache.guacamole.token.StandardTokens;
+import org.apache.guacamole.token.TokenFilter;
 
 /**
  * Disable authentication in Guacamole. All users accessing Guacamole are
@@ -43,18 +43,18 @@ import org.glyptodon.guacamole.token.TokenFilter;
  *    </config>
  *  </configs>
  *
- * The default configuration: /etc/guacamole/noauth-config.xml should only contain 
+ * The default configuration: /etc/guacamole/noauth-config.xml should only contain
  *  <configs>
  *  </configs>
- * 
+ *
  * If the url is:
  *   http://localhost:8080/guacamole/#/?username=mst_henh&ident=1337
  *   The default configuration: /etc/guacamole/mst_henh_1337_noauth-config.xml will be loadet.
- * 
+ *
  * If the url is:
  *   http://localhost:8080/guacamole/#/?ident=1337
  *   The default configuration: /etc/guacamole/anonymous_337_noauth-config.xml will be loadet.
- * 
+ *
  * @author Heiko Henning
  */
 public class UserFilesAuthenticationProvider implements AuthenticationProvider {
@@ -74,7 +74,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
      * Guacamole server environment.
      */
     private final Environment environment;
-    
+
     /**
      * The default filename to use for the configuration, if not defined within
      * guacamole.properties.
@@ -143,7 +143,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
         public Map<String, GuacamoleConfiguration> getAuthorizedConfigurations() {
             return configs;
         }
-        
+
         public void setAuthorizedConfigurations(Map<String, GuacamoleConfiguration> configs) {
             this.configs = configs;
         }
@@ -158,7 +158,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
             return credentials;
         }
     }
-    
+
     /**
      * Creates a new UserFilesAuthenticationProvider that does not perform any
      * authentication at all. All attempts to access the Guacamole system are
@@ -188,13 +188,13 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         // Get config file, defaulting to GUACAMOLE_HOME/noauth-config.xml
         File configFile;
-        
+
         if (prefix != null && !prefix.isEmpty()) {
             // Check file path dont breaks folder.
             if (!prefix.matches("^[\\w \\-öÖäÄüÜßèéêù]+$")) {
                 throw new GuacamoleServerException("Invalid username or ident.");
             }
-            
+
             configFile = new File(environment.getGuacamoleHome(), prefix + DEFAULT_NOAUTH_CONFIG);
         } else {
             configFile = new File(environment.getGuacamoleHome(), DEFAULT_NOAUTH_CONFIG);
@@ -202,14 +202,14 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         return configFile;
     }
-    
+
     /**
      * Parse guacamole configuration xml.
-     * 
+     *
      * @param username
      * @param ident
      * @return
-     * @throws GuacamoleException 
+     * @throws GuacamoleException
      */
     public Map<String, GuacamoleConfiguration> parseConfigFile(String username, String ident) throws GuacamoleException {
         String prefix = null;
@@ -218,11 +218,11 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
         } else if (!ident.isEmpty()) {
             prefix = "anonymous_" + ident + "_";
         }
-        
+
         // Check mapping file mod time
         File configFile = getConfigurationFile(prefix);
         Map<String, GuacamoleConfiguration> configs = null;
-        
+
         if (configFile.exists()) {
 
             // If modified recently, gain exclusive access and recheck
@@ -233,10 +233,10 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
                 }
             }
         }
-        
+
         return configs;
     }
-    
+
     public synchronized Map<String, GuacamoleConfiguration> parseConfigFile() throws GuacamoleException {
         return parseConfigFile("");
     }
@@ -260,9 +260,9 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
             Reader reader = new BufferedReader(new FileReader(configFile));
             parser.parse(new InputSource(reader));
             reader.close();
-            
+
             Map<String, GuacamoleConfiguration> configs = null;
-            
+
             // Check if config is valid and use/init.
             Date now = new Date();
             if (contentHandler.getValidTo() == null || contentHandler.getValidTo().compareTo(now) >= 0) {
@@ -272,7 +272,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
             } else {
                 logger.warn("Ignore config: \"{}\" because its valid_to \"{}\" is outdated.", configFile, contentHandler.getValidTo().toString());
             }
-            
+
             logger.debug("getDeleteConfig: {}", ((contentHandler.getDeleteConfig() == true) ? "Yes" : "No"));
             if (contentHandler.getDeleteConfig() == true) {
                 try {
@@ -281,7 +281,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
                     logger.warn("Error deleting config file: \"{}\": \"{}\"", configFile, e.getMessage());
                 }
             }
-            
+
             return configs;
 
         }
@@ -296,7 +296,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
     public Map<String, GuacamoleConfiguration> getAuthorizedConfigurations(Credentials credentials) throws GuacamoleException {
         HttpServletRequest request = credentials.getRequest();
-        
+
         String username = request.getParameter("username");
         String ident = request.getParameter("ident");
 
@@ -304,12 +304,12 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
         if (username == null) {
             username = "";
         }
-        
+
         // Avoid null point exceptions.
         if (ident == null) {
             ident = "";
         }
-        
+
         /** Debug all HTTP_GET variables.
         @SuppressWarnings("unchecked")
         Map<String, String[]> params = request.getParameterMap();
@@ -320,7 +320,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 			logger.debug("kv: {} = {}", name, value);
         }
         **/
-        
+
         Map<String, GuacamoleConfiguration> configs = parseConfigFile(username, ident);
 
         // If no mapping available, report as such
@@ -336,7 +336,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         return configs;
     }
-    
+
     /**
      * Given an arbitrary credentials object, returns a Map containing all
      * configurations authorized by those credentials, filtering those
@@ -373,7 +373,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
         for (GuacamoleConfiguration config : configs.values()) {
             tokenFilter.filterValues(config.getParameters());
         }
-        
+
         return configs;
     }
 
@@ -401,7 +401,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
         if (authenticatedUser instanceof UserFilesAuthenticationProvider.UserFilesAuthenticatedUser && authenticatedUser.getAuthenticationProvider() == this) {
             return ((UserFilesAuthenticationProvider.UserFilesAuthenticatedUser) authenticatedUser).getAuthorizedConfigurations();
         }
-        
+
         // Otherwise, pull using credentials
         return getFilteredAuthorizedConfigurations(authenticatedUser.getCredentials());
 
@@ -442,9 +442,9 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     // Re parse config xml for loged in user on each page refresh.
-    public AuthenticatedUser updateAuthenticatedUser(AuthenticatedUser authenticatedUser, Credentials credentials) 
+    public AuthenticatedUser updateAuthenticatedUser(AuthenticatedUser authenticatedUser, Credentials credentials)
             throws GuacamoleException {
-    
+
         // Get configurations
         Map<String, GuacamoleConfiguration> configs = getFilteredAuthorizedConfigurations(credentials);
 
@@ -458,12 +458,12 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
     @Override
      // Create new user context wih new config.
-    public UserContext updateUserContext(UserContext context, AuthenticatedUser authenticatedUser) 
+    public UserContext updateUserContext(UserContext context, AuthenticatedUser authenticatedUser, Credentials credentials)
             throws GuacamoleException {
-                        
+
         // Get configurations
-        Map<String, GuacamoleConfiguration> configs = getFilteredAuthorizedConfigurations(authenticatedUser);
-        
+        Map<String, GuacamoleConfiguration> configs = getFilteredAuthorizedConfigurations(credentials);
+
         // Return as unauthorized if not authorized to retrieve configs
         if (configs == null) {
             return null;
@@ -471,5 +471,31 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         // Return user context restricted to authorized configs
         return new SimpleUserContext(this, authenticatedUser.getIdentifier(), configs);
+    }
+
+    @Override
+    public UserContext decorate(UserContext context,
+            AuthenticatedUser authenticatedUser,
+            Credentials credentials) throws GuacamoleException {
+
+		return context;
+	}
+
+    @Override
+    public UserContext redecorate(UserContext decorated, UserContext context,
+            AuthenticatedUser authenticatedUser,
+            Credentials credentials) throws GuacamoleException {
+
+	   return context;
+	}
+
+    @Override
+    public void shutdown() {
+    	;
+    }
+
+    @Override
+    public Object getResource() throws GuacamoleException {
+    	return null;
     }
 }
