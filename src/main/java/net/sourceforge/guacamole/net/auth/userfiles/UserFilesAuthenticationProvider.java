@@ -325,7 +325,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         // If no mapping available, report as such
         if (configs == null) {
-            throw new GuacamoleServerException("Configuration could not be read.");
+            return configs;
         } else {
             // Set username if given.
             if (!username.isEmpty()) {
@@ -450,9 +450,19 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         // Return as unauthorized if not authorized to retrieve configs
         if (configs == null) {
-            return null;
+            logger.debug("No config found, trying cookie...");
+            configs = getFilteredAuthorizedConfigurations(authenticatedUser);
+
+            if (configs == null) {
+                logger.debug("No config found, aborting...");
+                return null;
+            }
+
+            logger.debug("Found config with cookie...");
+            return new UserFilesAuthenticationProvider.UserFilesAuthenticatedUser(authenticatedUser.getCredentials(), configs);
         }
 
+        logger.debug("Found config with credentials...");
         return new UserFilesAuthenticationProvider.UserFilesAuthenticatedUser(credentials, configs);
     }
 
