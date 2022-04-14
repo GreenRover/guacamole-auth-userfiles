@@ -191,7 +191,7 @@ public class UserFilesAuthenticationProvider implements AuthenticationProvider {
 
         if (prefix != null && !prefix.isEmpty()) {
             // Check file path dont breaks folder.
-            if (!prefix.matches("^[\\w \\-öÖäÄüÜßèéêù]+$")) {
+            if (!prefix.matches("^[\\w \\-\\.öÖäÄüÜßèéêù]+$")) {
                 throw new GuacamoleServerException("Invalid username or ident.");
             }
 

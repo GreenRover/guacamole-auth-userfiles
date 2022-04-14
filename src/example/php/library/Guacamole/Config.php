@@ -262,7 +262,7 @@ class Guacamole_Config {
 
         $prefix .= $ident;
 
-        if (!preg_match('/^[\w \-öÖäÄüÜßèéêù]+$/', $prefix)) {
+        if (!preg_match('/^[\w \-.öÖäÄüÜßèéêù]+$/', $prefix)) {
             throw new Guacamole_Config_Exception('Invalid username or ident, please avoid special chars.');
         }
 
